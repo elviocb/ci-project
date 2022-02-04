@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Format Checkout
+      - name: Check code format
         run: yarn format:check
 
       - name: Testing & Coverage
