@@ -8,6 +8,4 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - name: Log variables
-        run: |
-          echo ${{ github }}
+      - uses: hmarr/debug-action@v2
