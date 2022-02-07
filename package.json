@@ -12,6 +12,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "build:action": "ncc build .github/actions/hello/index.js -o .github/actions/hello/dist/",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -37,6 +38,9 @@
     ]
   },
   "devDependencies": {
+    "@actions/core": "^1.6.0",
+    "@actions/github": "^5.0.0",
+    "@vercel/ncc": "^0.33.1",
     "prettier": "2.5.1",
     "semantic-release": "^19.0.2"
   }
