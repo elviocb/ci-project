@@ -1,4 +1,4 @@
-name: 'PR Checker'
+name: PR Checker
 author: Elvio Cavalcante
 description: 'Checks the PR body and title'
 inputs:

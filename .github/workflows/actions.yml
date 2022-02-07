@@ -1,17 +1,17 @@
-name: Check PR Action
+name: PR Checker
 
 on:
   pull_request:
     branches: [develop, master]
 
 jobs:
-  testing_action:
+  check:
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout branch'
         uses: actions/checkout@v2
 
-      - name: 'Check PR'
+      - name: PR Checker
         uses: ./.github/actions/pr-checker
         id: pull-request
         with:

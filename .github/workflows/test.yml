@@ -2,7 +2,7 @@ name: PR Checker
 
 on:
   pull_request:
-    branches: [develop, master]
+    branches: [xdevelop, xmaster]
 
 jobs:
   check:
