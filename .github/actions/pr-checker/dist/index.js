@@ -11675,14 +11675,33 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(2186)
 const github = __nccwpck_require__(5438)
 
+const TICKET_REGEX = /\[\w+-\d+\]/
+const BYPASS_LABEL = 'no-ticket'
+const SUCCESS_MESSAGE = 'Thank you for connection the PR with a ticket.'
+
+const getErrorMessage = pullRequestType =>
+  `Please connect the PR's ${pullRequestType} to a ticket or add the ${BYPASS_LABEL} to bypass`
+
 async function run() {
   try {
     const token = core.getInput('token')
     const octokit = github.getOctokit(token)
+    const { body, title } = github.context.payload.pull_request
 
-    console.log(JSON.stringify(github.context, null, '\t'))
+    const titleMatches = title.match(TICKET_REGEX)
+    const bodyMatches = body.match(TICKET_REGEX)
 
-    // core.setOutput('pull-request', JSON.stringify(resp.data))
+    if (!titleMatches) {
+      core.setFailed(getErrorMessage('title'))
+      return
+    }
+
+    if (!bodyMatches) {
+      core.setFailed(getErrorMessage('body'))
+      return
+    }
+
+    core.setOutput('pull-request', SUCCESS_MESSAGE)
   } catch (error) {
     core.error(error)
     core.setFailed(error.message)
