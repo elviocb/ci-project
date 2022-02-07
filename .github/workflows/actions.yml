@@ -6,8 +6,22 @@ jobs:
   testing_action:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/actions/hello
+      - name: 'Checkout branch'
+        uses: actions/checkout@v2
+
+      - name: 'Open an Issue'
+        uses: ./.github/actions/open-issue
+        id: issue
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: Some title
+          body: Some body
+          assignees: 'elviocb,elviogithub'
+      - run: |
+          echo ${{ steps.issue.outputs.issue }}
+
+      - name: 'Say hello'
+        uses: ./.github/actions/hello
         id: hello
         with:
           who-to-greet: World
