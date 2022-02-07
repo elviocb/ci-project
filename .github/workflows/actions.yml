@@ -1,6 +1,8 @@
-name: Hello Action
+name: Check PR Action
 
-on: push
+on:
+  pull_request:
+    branches: [develop, master]
 
 jobs:
   testing_action:
@@ -9,22 +11,30 @@ jobs:
       - name: 'Checkout branch'
         uses: actions/checkout@v2
 
-      - name: 'Open an Issue'
-        uses: ./.github/actions/open-issue
-        id: issue
+      - name: 'Check PR'
+        uses: ./.github/actions/pr-checker
+        id: pull-request
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: Some title
-          body: Some body
-          assignees: 'elviocb,elviogithub'
       - run: |
-          echo ${{ steps.issue.outputs.issue }}
+          echo ${{ steps.pull-request.outputs.pull-request }}
 
-      - name: 'Say hello'
-        uses: ./.github/actions/hello
-        id: hello
-        with:
-          who-to-greet: World
-      - run: |
-          echo 'Time: ${{ steps.hello.outputs.time }}'
-          echo $HELLO
+      # - name: 'Open an Issue'
+      #   uses: ./.github/actions/open-issue
+      #   id: issue
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     title: Some title
+      #     body: Some body
+      #     assignees: 'elviocb,elviogithub'
+      # - run: |
+      #     echo ${{ steps.issue.outputs.issue }}
+
+      # - name: 'Say hello'
+      #   uses: ./.github/actions/hello
+      #   id: hello
+      #   with:
+      #     who-to-greet: World
+      # - run: |
+      #     echo 'Time: ${{ steps.hello.outputs.time }}'
+      #     echo $HELLO

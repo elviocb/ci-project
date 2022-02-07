@@ -12,7 +12,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "build:action": "ncc build .github/actions/hello/index.js -o .github/actions/hello/dist/ && ncc build .github/actions/open-issue/index.js -o .github/actions/open-issue/dist/",
+    "build:action": "ncc build .github/actions/pr-checker/index.js -o .github/actions/pr-checker/dist/",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
