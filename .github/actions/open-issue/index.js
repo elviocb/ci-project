@@ -10,7 +10,7 @@ async function run() {
 
     const octokit = github.getOctokit(token)
 
-    const resp = await octokit.issues.create({
+    const resp = await octokit.rest.issues.create({
       // next 2 lines are same as ...github.context.repo
       // owner: github.context.repo.owner,
       // repo: github.context.repo.repo,
@@ -22,6 +22,7 @@ async function run() {
 
     core.setOutput('issue', JSON.stringify(resp.data))
   } catch (error) {
+    core.error(error)
     core.setFailed(error.message)
   }
 }
