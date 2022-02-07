@@ -6,7 +6,7 @@ const BYPASS_LABEL = 'no-ticket'
 const SUCCESS_MESSAGE = 'Thank you for connection the PR with a ticket.'
 
 const getErrorMessage = pullRequestType =>
-  `Please connect the PR's ${pullRequestType} to a ticket or add the ${BYPASS_LABEL} to bypass`
+  `Please connect the PR's ${pullRequestType} to a ticket or add the "${BYPASS_LABEL}" label to bypass this check.`
 
 async function run() {
   try {

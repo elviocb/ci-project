@@ -1,77 +1,77 @@
-name: CI
+# name: CI
 
-on:
-  pull_request:
-    branches: [xxx]
-  push:
-    branches: [xxx]
+# on:
+#   pull_request:
+#     branches: [xxx]
+#   push:
+#     branches: [xxx]
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Project
-        uses: actions/checkout@v2
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout Project
+#         uses: actions/checkout@v2
 
-      - name: Setup Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: '14.17'
+#       - name: Setup Node
+#         uses: actions/setup-node@v1
+#         with:
+#           node-version: '14.17'
 
-      - name: Cache node modules
-        uses: actions/cache@v2
-        id: node-modules-cache
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-node_modules-${{ github.sha }}
+#       - name: Cache node modules
+#         uses: actions/cache@v2
+#         id: node-modules-cache
+#         with:
+#           path: '**/node_modules'
+#           key: ${{ runner.os }}-node_modules-${{ github.sha }}
 
-      - name: Install yarn
-        run: npm install -g yarn
+#       - name: Install yarn
+#         run: npm install -g yarn
 
-      - name: Get yarn cache directory path
-        if: ${{ steps.node-modules-cache.outputs.cache-hit != 'true' }}
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+#       - name: Get yarn cache directory path
+#         if: ${{ steps.node-modules-cache.outputs.cache-hit != 'true' }}
+#         id: yarn-cache-dir-path
+#         run: echo "::set-output name=dir::$(yarn cache dir)"
 
-      - name: Check yarn cache
-        if: ${{ steps.node-modules-cache.outputs.cache-hit != 'true' }}
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: node-cache-${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            node-cache-${{ runner.os }}-yarn-
+#       - name: Check yarn cache
+#         if: ${{ steps.node-modules-cache.outputs.cache-hit != 'true' }}
+#         uses: actions/cache@v2
+#         with:
+#           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+#           key: node-cache-${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+#           restore-keys: |
+#             node-cache-${{ runner.os }}-yarn-
 
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+#       - name: Install dependencies
+#         run: yarn install --frozen-lockfile
 
-      - name: Check code format
-        run: yarn format:check
+#       - name: Check code format
+#         run: yarn format:check
 
-      - name: Testing & Coverage
-        run: yarn test -- --coverage
-        env:
-          CI: true
+#       - name: Testing & Coverage
+#         run: yarn test -- --coverage
+#         env:
+#           CI: true
 
-      - name: Upload artifact (code coverage)
-        uses: actions/upload-artifact@v2
-        with:
-          name: code-coverage
-          path: coverage
+#       - name: Upload artifact (code coverage)
+#         uses: actions/upload-artifact@v2
+#         with:
+#           name: code-coverage
+#           path: coverage
 
-      - name: Build Project
-        if: github.event_name == 'push'
-        run: yarn build
+#       - name: Build Project
+#         if: github.event_name == 'push'
+#         run: yarn build
 
-      - name: Generate Release
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-        run: npx semantic-release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#       - name: Generate Release
+#         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+#         run: npx semantic-release
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Deploy to Staging
-        if: github.event_name == 'push'
-        run: npx surge --project ./build --domain fumbling-ghost.surge.sh
-        env:
-          SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
-          SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+#       - name: Deploy to Staging
+#         if: github.event_name == 'push'
+#         run: npx surge --project ./build --domain fumbling-ghost.surge.sh
+#         env:
+#           SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
+#           SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
