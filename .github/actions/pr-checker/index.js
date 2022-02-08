@@ -19,14 +19,10 @@ async function run() {
     const token = core.getInput('token')
     const octokit = github.getOctokit(token)
     const { body, title, labels } = github.context.payload.pull_request
-    console.log(JSON.stringify(labels, null, '\t'))
-    console.log(JSON.stringify(github, null, '\t'))
+
     const shouldBypass = labels.map(label => label.name).includes(BYPASS_LABEL)
     const titleMatches = title.match(TICKET_REGEX)
     const bodyMatches = body.match(TICKET_REGEX)
-
-    core.info('Output to the actions build log')
-    core.notice('This is a message that will also emit an annotation')
 
     if (shouldBypass) {
       setBypassMessage()
