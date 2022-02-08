@@ -34,7 +34,7 @@ const linkTicketToBody = body => {
 
   return body.replace(
     NOT_LINKED_TICKET_REGEX,
-    `[${ticketNumber}](${CLICKUP_URL + ticketNumber})`
+    `[${ticketNumber}](${TICKET_BASE_URL + ticketNumber})`
   )
 }
 
