@@ -2,6 +2,8 @@ const core = require('@actions/core')
 const github = require('@actions/github')
 
 const TICKET_REGEX = /\[\w+-\d+\]/
+const SQUARE_BRACKETS_REGEX = /[\[\]]/g
+const CLICKUP_URL = 'https://app.clickup.com/t/'
 const BYPASS_LABEL = 'no-ticket'
 const SUCCESS_MESSAGE = 'Thank you for connection the PR with a ticket.'
 const BYPASS_MESSAGE =
@@ -13,6 +15,18 @@ const setErrorMessage = pullRequestType =>
   )
 const setSuccessMessage = () => core.setOutput('pull-request', SUCCESS_MESSAGE)
 const setBypassMessage = () => core.setOutput('pull-request', BYPASS_MESSAGE)
+
+const linkTicketToBody = body => {
+  const bodyMatch = body.match(TICKET_REGEX)
+  if (!bodyMatch) {
+    core.warning('Could not link the ticket. The ticket was not found on body')
+    return
+  }
+
+  const ticketNumber = bodyMatch[0].replace(SQUARE_BRACKETS_REGEX, '')
+
+  body.replace(TICKET_REGEX, `[${ticketNumber}](${CLICKUP_URL + ticketNumber})`)
+}
 
 async function run() {
   try {
@@ -38,6 +52,10 @@ async function run() {
       setErrorMessage('body')
       return
     }
+
+    const updatedBody = linkTicketToBody(body)
+
+    console.log(JSON.stringify(updatedBody, null, '\t'))
 
     setSuccessMessage()
   } catch (error) {
