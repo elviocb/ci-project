@@ -1,10 +1,12 @@
 const core = require('@actions/core')
 const github = require('@actions/github')
 
-const TITLE_TICKET_REGEX = /\[\w+-\d+\]/
-const BODY_TICKET_REGEX = /\[\w+-\d+\]\r?\n/
+const TICKET_REGEX = /\[\w+-\d+\]/
+const TICKET_BASE_URL = 'https://app.clickup.com/t/'
+const LINKED_TICKET_REGEX = new RegExp(TICKET_BASE_URL)
+const NOT_LINKED_TICKET_REGEX = /\[\w+-\d+\]\r?\n/
+
 const SQUARE_BRACKETS_REGEX = /[\[\]]/g
-const CLICKUP_URL = 'https://app.clickup.com/t/'
 const BYPASS_LABEL = 'no-ticket'
 const SUCCESS_MESSAGE = 'Thank you for connection the PR with a ticket.'
 const BYPASS_MESSAGE =
@@ -18,7 +20,13 @@ const setSuccessMessage = () => core.setOutput('pull-request', SUCCESS_MESSAGE)
 const setBypassMessage = () => core.setOutput('pull-request', BYPASS_MESSAGE)
 
 const linkTicketToBody = body => {
-  const bodyMatch = body.match(BODY_TICKET_REGEX)
+  const isAlreadyLinked = body.match(LINKED_TICKET_REGEX)
+  if (isAlreadyLinked) {
+    core.warning('Ticket is already linked.')
+    return
+  }
+
+  const bodyMatch = body.match(NOT_LINKED_TICKET_REGEX)
   if (!bodyMatch) {
     core.warning('Could not link the ticket.')
     return
@@ -27,7 +35,7 @@ const linkTicketToBody = body => {
   const ticketNumber = bodyMatch[0].trim().replace(SQUARE_BRACKETS_REGEX, '')
 
   return body.replace(
-    BODY_TICKET_REGEX,
+    NOT_LINKED_TICKET_REGEX,
     `[${ticketNumber}](${CLICKUP_URL + ticketNumber})`
   )
 }
@@ -39,8 +47,8 @@ async function run() {
     const { body, title, labels, number } = github.context.payload.pull_request
 
     const shouldBypass = labels.map(label => label.name).includes(BYPASS_LABEL)
-    const titleMatches = title.match(TITLE_TICKET_REGEX)
-    const bodyMatches = body.match(BODY_TICKET_REGEX)
+    const titleMatches = title.match(TICKET_REGEX)
+    const bodyMatches = body.match(TICKET_REGEX)
 
     console.log(JSON.stringify(body, null, '\t'))
 
