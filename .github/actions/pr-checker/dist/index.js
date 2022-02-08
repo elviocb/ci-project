@@ -11675,7 +11675,8 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(2186)
 const github = __nccwpck_require__(5438)
 
-const TICKET_REGEX = /\[\w+-\d+\]\ /g
+const TITLE_TICKET_REGEX = /\[\w+-\d+\]/
+const BODY_TICKET_REGEX = /\[\w+-\d+\]\n/
 const SQUARE_BRACKETS_REGEX = /[\[\]]/g
 const CLICKUP_URL = 'https://app.clickup.com/t/'
 const BYPASS_LABEL = 'no-ticket'
@@ -11712,8 +11713,10 @@ async function run() {
     const { body, title, labels, number } = github.context.payload.pull_request
 
     const shouldBypass = labels.map(label => label.name).includes(BYPASS_LABEL)
-    const titleMatches = title.match(TICKET_REGEX)
-    const bodyMatches = body.match(TICKET_REGEX)
+    const titleMatches = title.match(TITLE_TICKET_REGEX)
+    const bodyMatches = body.match(BODY_TICKET_REGEX)
+
+    console.log(JSON.stringify(body, null, '\t'))
 
     if (shouldBypass) {
       setBypassMessage()
