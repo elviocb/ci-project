@@ -16,8 +16,6 @@ const setErrorMessage = pullRequestType =>
   core.setFailed(
     `Please connect the PR's ${pullRequestType} to a ticket or add the "${BYPASS_LABEL}" label to bypass this check.`
   )
-const setSuccessMessage = () => core.info('pull-request', SUCCESS_MESSAGE)
-const setBypassMessage = () => core.info('pull-request', BYPASS_MESSAGE)
 
 const linkTicketToBody = body => {
   const isAlreadyLinked = body.match(LINKED_TICKET_REGEX)
@@ -51,7 +49,7 @@ async function run() {
     const bodyMatches = body.match(TICKET_REGEX)
 
     if (shouldBypass) {
-      setBypassMessage()
+      core.info(`::info:: ${BYPASS_MESSAGE}`)
       return
     }
 
@@ -78,11 +76,11 @@ async function run() {
 
       core.info(`Response: ${response.status}`)
       if (response.status !== 200) {
-        core.error('Updating the pull request has failed')
+        core.error('::error:: Updating the pull request has failed')
       }
     }
 
-    setSuccessMessage()
+    core.info(`::info:: ${SUCCESS_MESSAGE}`)
   } catch (error) {
     core.error(error)
     core.setFailed(error.message)
