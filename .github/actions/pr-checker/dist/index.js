@@ -11675,7 +11675,7 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(2186)
 const github = __nccwpck_require__(5438)
 
-const TICKET_REGEX = /\[\w+-\d+\]/
+const TICKET_REGEX = /\[\w+-\d+\]\ /g
 const SQUARE_BRACKETS_REGEX = /[\[\]]/g
 const CLICKUP_URL = 'https://app.clickup.com/t/'
 const BYPASS_LABEL = 'no-ticket'
@@ -11693,11 +11693,11 @@ const setBypassMessage = () => core.setOutput('pull-request', BYPASS_MESSAGE)
 const linkTicketToBody = body => {
   const bodyMatch = body.match(TICKET_REGEX)
   if (!bodyMatch) {
-    core.warning('Could not link the ticket. The ticket was not found on body')
+    core.warning('Could not link the ticket.')
     return
   }
 
-  const ticketNumber = bodyMatch[0].replace(SQUARE_BRACKETS_REGEX, '')
+  const ticketNumber = bodyMatch[0].trim().replace(SQUARE_BRACKETS_REGEX, '')
 
   return body.replace(
     TICKET_REGEX,
@@ -11709,7 +11709,7 @@ async function run() {
   try {
     const token = core.getInput('token')
     const octokit = github.getOctokit(token)
-    const { body, title, labels } = github.context.payload.pull_request
+    const { body, title, labels, number } = github.context.payload.pull_request
 
     const shouldBypass = labels.map(label => label.name).includes(BYPASS_LABEL)
     const titleMatches = title.match(TICKET_REGEX)
@@ -11732,7 +11732,21 @@ async function run() {
 
     const updatedBody = linkTicketToBody(body)
 
-    console.log(JSON.stringify(updatedBody, null, '\t'))
+    if (updatedBody) {
+      console.log(JSON.stringify(updatedBody, null, '\t'))
+      const request = {
+        ...github.context.repo,
+        title,
+        body: updatedBody,
+        pull_number: number
+      }
+      const response = await octokit.pulls.update(request)
+
+      core.info(`Response: ${response.status}`)
+      if (response.status !== 200) {
+        core.error('Updating the pull request has failed')
+      }
+    }
 
     setSuccessMessage()
   } catch (error) {
