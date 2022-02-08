@@ -16,13 +16,13 @@ const setErrorMessage = pullRequestType =>
   core.setFailed(
     `Please connect the PR's ${pullRequestType} to a ticket or add the "${BYPASS_LABEL}" label to bypass this check.`
   )
-const setSuccessMessage = () => core.setOutput('pull-request', SUCCESS_MESSAGE)
-const setBypassMessage = () => core.setOutput('pull-request', BYPASS_MESSAGE)
+const setSuccessMessage = () => core.info('pull-request', SUCCESS_MESSAGE)
+const setBypassMessage = () => core.info('pull-request', BYPASS_MESSAGE)
 
 const linkTicketToBody = body => {
   const isAlreadyLinked = body.match(LINKED_TICKET_REGEX)
   if (isAlreadyLinked) {
-    core.warning('Ticket is already linked.')
+    core.info('Skip linking, ticket is already linked.')
     return
   }
 
@@ -50,8 +50,6 @@ async function run() {
     const titleMatches = title.match(TICKET_REGEX)
     const bodyMatches = body.match(TICKET_REGEX)
 
-    console.log(JSON.stringify(body, null, '\t'))
-
     if (shouldBypass) {
       setBypassMessage()
       return
@@ -70,7 +68,6 @@ async function run() {
     const updatedBody = linkTicketToBody(body)
 
     if (updatedBody) {
-      console.log(JSON.stringify(updatedBody, null, '\t'))
       const request = {
         ...github.context.repo,
         title,
