@@ -69,7 +69,7 @@ async function run() {
         body: updatedBody,
         pull_number: number
       }
-      const response = await octokit.pulls.update(request)
+      const response = await octokit.rest.pulls.update(request)
 
       core.info(`Response: ${response.status}`)
       if (response.status !== 200) {
