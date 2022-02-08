@@ -11687,7 +11687,7 @@ async function run() {
     const token = core.getInput('token')
     const octokit = github.getOctokit(token)
     const { body, title } = github.context.payload.pull_request
-
+    console.log(JSON.stringify(github, null, '\t'))
     const titleMatches = title.match(TICKET_REGEX)
     const bodyMatches = body.match(TICKET_REGEX)
 
