@@ -25,7 +25,10 @@ const linkTicketToBody = body => {
 
   const ticketNumber = bodyMatch[0].replace(SQUARE_BRACKETS_REGEX, '')
 
-  body.replace(TICKET_REGEX, `[${ticketNumber}](${CLICKUP_URL + ticketNumber})`)
+  return body.replace(
+    TICKET_REGEX,
+    `[${ticketNumber}](${CLICKUP_URL + ticketNumber})`
+  )
 }
 
 async function run() {
