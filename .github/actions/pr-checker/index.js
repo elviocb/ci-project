@@ -22,13 +22,13 @@ const setBypassMessage = () => core.info('pull-request', BYPASS_MESSAGE)
 const linkTicketToBody = body => {
   const isAlreadyLinked = body.match(LINKED_TICKET_REGEX)
   if (isAlreadyLinked) {
-    core.info('Skip linking, ticket is already linked.')
+    core.info('::info:: Skipped linking.')
     return
   }
 
   const bodyMatch = body.match(NOT_LINKED_TICKET_REGEX)
   if (!bodyMatch) {
-    core.warning('Could not link the ticket.')
+    core.warning('::warn:: Could not link the ticket.')
     return
   }
 

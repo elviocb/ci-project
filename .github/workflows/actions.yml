@@ -17,8 +17,6 @@ jobs:
         id: pull-request
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-      - run: |
-          echo ${{ steps.pull-request.outputs.pull-request }}
 
       # - name: 'Open an Issue'
       #   uses: ./.github/actions/open-issue
